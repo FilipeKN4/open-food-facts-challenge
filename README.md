@@ -9,17 +9,17 @@ O projeto tem como objetivo dar suporte a equipe de nutricionistas da empresa Fi
 ### Obrigatório
  
 - Trabalhar em um FORK deste repositório em seu usuário;
-- O projeto back-end deverá ser desenvolvido usando Python com o framework Django;
-- Configurar os testes usando Pytest;
-- Documentação para configuração do projeto em ambientes de produção;
+- O projeto back-end deverá ser desenvolvido usando Python com o framework Django ou Django Rest Framework;
+- Configurar os testes usando Pytest ou algum de sua preferência;
+- Documentação para configuração do projeto em ambientes de produção (como instalar, rodar e referências a libs usadas);
  
 
 ## O projeto
  
-- Criar um banco de dados no Mongo Atlas: https://www.mongodb.com/cloud/atlas
-- Criar uma REST API usando Django com as melhores práticas de desenvolvimento
-- Integrar a API com o banco de dados MongoDB criado no Atlas para persistir os dados
-- Recomendável usar (PyMongo)[https://api.mongodb.com/python/current/] 
+- Criar um banco de dados MongoDB usando Atlas: https://www.mongodb.com/cloud/atlas ou algum Banco de Dados SQL se não sentir confortável com NoSQL;
+- Criar uma REST API usando Django ou Django Rest Framework com as melhores práticas de desenvolvimento
+- Integrar a API com o banco de dados criado para persistir os dados
+- Recomendável usar Drivers oficiais para integração com o DB
 - Desenvolver Testes Unitários
 
 ### Modelo de Datos:
@@ -53,7 +53,7 @@ Na REST API teremos um CRUD com os seguintes endpoints:
  - `GET /products/:code`: Obter a informação somente de um produto da base de dados
  - `GET /products`: Listar todos os produtos da base de dados, adicionar sistema de paginação para não sobrecarregar o `REQUEST`.
 
-Ao terminar os endpoints, configurar os testes usando Pytest.
+Ao terminar os endpoints, configurar os testes usando Pytest ou algum de sua preferência.
 
 
 ## [Bônus] DevOps
