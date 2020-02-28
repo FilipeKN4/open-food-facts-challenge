@@ -9,7 +9,7 @@ O projeto tem como objetivo dar suporte a equipe de nutricionistas da empresa Fi
 ### Obrigatório
  
 - Trabalhar em um FORK deste repositório em seu usuário;
-- O projeto back-end deverá ser desenvolvido usando Python com o Django Rest Framework;
+- O projeto back-end deverá ser desenvolvido usando Python com o [Django Rest Framework](https://www.django-rest-framework.org);
 - Configurar os testes usando Pytest ou algum de sua preferência;
 - Documentação para configuração do projeto em ambientes de produção (como instalar, rodar e referências a libs usadas);
  
