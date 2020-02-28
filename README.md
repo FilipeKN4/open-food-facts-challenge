@@ -22,7 +22,7 @@ O projeto tem como objetivo dar suporte a equipe de nutricionistas da empresa Fi
 - Recomendável usar Drivers oficiais para integração com o DB
 - Desenvolver Testes Unitários
 
-### Modelo de Datos:
+### Modelo de Dados:
 
 Para a definição do modelo, consultar o arquivo [products.json](./products.json) que foi exportado do Open Food Facts, um detalhe importante é que temos dois campos personalizados para poder fazer o controle interno do sistema e que deverão ser aplicados em todos os alimentos no momento da importação, os campos são:
 
@@ -47,7 +47,7 @@ Nota: Importante lembrar que todos os dados deverão ter os campos personalizado
 
 Na REST API teremos um CRUD com os seguintes endpoints:
 
- - `GET /`: Detalhes da API, se conexão leitura e escritura com a base de datos está OK, horário da última vez que o CRON foi executado, tempo online e uso de memória.
+ - `GET /`: Detalhes da API, se conexão leitura e escritura com a base de dados está OK, horário da última vez que o CRON foi executado, tempo online e uso de memória.
  - `PUT /products/:code`: Será responsável por receber atualizações do Projeto Web
  - `DELETE /products/:code`: Mudar o status do produto para `trash`
  - `GET /products/:code`: Obter a informação somente de um produto da base de dados
