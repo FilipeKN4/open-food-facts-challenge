@@ -70,13 +70,16 @@ TEMPLATES = [
 WSGI_APPLICATION = 'open_food_facts.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/3.1/ref/settings/#databases
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'djongo',
+        "CLIENT": {
+           "name": "open_food_facts_db",
+           "host": "mongodb+srv://user_admin:<password>@cluster0.005uq.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+           "username": "user_admin",
+           "password": "Admin123",
+           "authMechanism": "SCRAM-SHA-1",
+        }, 
     }
 }
 
