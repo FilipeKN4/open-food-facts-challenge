@@ -18,11 +18,14 @@ from django.urls import path, include
 
 from rest_framework import routers
 from products.api import viewsets as products_viewsets
+from account.api import viewsets as account_viewsets
 
 route = routers.DefaultRouter()
+route.register(r'users', account_viewsets.UserViewSet)
+route.register(r'groups', account_viewsets.GroupViewSet)
 route.register(r'products', products_viewsets.ProductsViewSet, basename="Products")
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include(route.urls))
+    path('', include(route.urls)),
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
