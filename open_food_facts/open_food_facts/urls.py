@@ -23,9 +23,10 @@ from account.api import viewsets as account_viewsets
 route = routers.DefaultRouter()
 route.register(r'users', account_viewsets.UserViewSet)
 route.register(r'groups', account_viewsets.GroupViewSet)
-route.register(r'products', products_viewsets.ProductsViewSet, basename="Products")
+# route.register(r'products', products_viewsets.ProductsViewSet, basename="Products")
 
 urlpatterns = [
-    path('', include(route.urls)),
+    path('', include('products.urls')),
+    path('api/', include(route.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]

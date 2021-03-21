@@ -11,18 +11,38 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('file', nargs='+', type=str)
+        
 
+    def get_cleaned_fields(self, product_json, fields):
+        fields_dict = {}
+        for field in fields:
+            if len(product_json.get(field).split('"')) > 1:
+                fields_dict[field] = product_json.get(field).split('"')[1]
+            elif product_json.get(field) == '"':
+                fields_dict[field] = ''
+            else:
+                fields_dict[field] = product_json.get(field)
+                
+        return fields_dict
+    
+    
     def handle(self, *args, **options):
         for file in options['file']:
             try:
                 print(file)
                 json_content = []
+                count = 0
                 with gzip.open('./all_products/{}'.format(file), 'r') as gzip_file:
                     for line in gzip_file:
-                        line = line.rstrip()
-                        if line:
-                            obj = json.loads(line)
-                            json_content.append(obj)
+                        if count < 100:
+                            line = line.rstrip()
+                            if line:
+                                obj = json.loads(line)
+                                json_content.append(obj)
+                        else:
+                            break
+                        count += 1
+                        
             except:
                 raise CommandError('File "%s" not found' % file)
             
@@ -51,14 +71,7 @@ class Command(BaseCommand):
             ]
 
             for product_json in json_content:
-                fields_dict = {}
-                for field in fields:
-                    if len(product_json.get(field).split('"')) > 1:
-                        fields_dict[field] = product_json.get(field).split('"')[1]
-                    elif product_json.get(field) == '"':
-                        fields_dict[field] = ''
-                    else:
-                        fields_dict[field] = product_json.get(field)
+                fields_dict = self.get_cleaned_fields(product_json, fields)
                                     
                 if not Products.objects.filter(code=fields_dict['code']):
                     Products.objects.create(
@@ -79,8 +92,8 @@ class Command(BaseCommand):
                         ingredients_text=fields_dict['ingredients_text'],
                         traces=fields_dict['traces'],
                         serving_size=fields_dict['serving_size'],
-                        serving_quantity=Decimal(fields_dict['serving_quantity']) if fields_dict['serving_quantity'] != '' else 0,
-                        nutriscore_score=int(fields_dict['nutriscore_score']) if fields_dict['serving_quantity'] != '' else 0,
+                        serving_quantity= 0 if fields_dict['serving_quantity'] == '' else Decimal(fields_dict['serving_quantity']),
+                        nutriscore_score= 0 if fields_dict['nutriscore_score'] == '' else int(fields_dict['nutriscore_score']),
                         nutriscore_grade=fields_dict['nutriscore_grade'],
                         main_category=fields_dict['main_category'],
                         image_url=fields_dict['image_url']
