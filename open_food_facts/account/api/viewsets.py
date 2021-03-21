@@ -1,6 +1,11 @@
+#Django imports
 from django.contrib.auth.models import User, Group
+
+# Django Rest Framework imports
 from rest_framework import viewsets
 from rest_framework import permissions
+
+# Products app imports
 from account.api import serializers
 
 

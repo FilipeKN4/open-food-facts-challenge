@@ -1,3 +1,4 @@
+# Libs imports
 from djongo import models
 
 class Products(models.Model):

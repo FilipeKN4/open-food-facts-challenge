@@ -27,6 +27,6 @@ route.register(r'groups', account_viewsets.GroupViewSet)
 
 urlpatterns = [
     path('', include('products.urls')),
-    path('api/', include(route.urls)),
+    path('account/', include(route.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]

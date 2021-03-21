@@ -1,13 +1,19 @@
+# Libs imports
 import gzip
 import json
 from decimal import Decimal
 from datetime import datetime
+
+# Django imports
 from django.utils.timezone import make_aware
 from django.core.management.base import BaseCommand, CommandError
+
+# Products app imports
 from products.models import Products
+from products.views import get_product, update_product
 
 class Command(BaseCommand):
-    help = 'Import products from gave file'
+    help = 'Import or Update products from gave file'
 
     def add_arguments(self, parser):
         parser.add_argument('file', nargs='+', type=str)
@@ -98,5 +104,14 @@ class Command(BaseCommand):
                         main_category=fields_dict['main_category'],
                         image_url=fields_dict['image_url']
                     )
+                    
+                    print('Product with code "%s" successfully created' % fields_dict['code'])
                 else:
-                    print('Product with code "%s" already exists' % fields_dict['code'])
+                    product = Products.objects.filter(code=fields_dict['code']).first()
+                    if product:
+                        data = get_product(product.code)
+                        product_json = data.get('product')
+                        if product_json:
+                            product = update_product(product_json, product)
+                            
+                            print('Product with code "%s" successfully updated' % fields_dict['code'])
