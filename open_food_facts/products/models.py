@@ -31,3 +31,14 @@ class Products(models.Model):
     nutriscore_grade = models.CharField(max_length=1, blank=True, null=True)
     main_category = models.TextField(blank=True, null=True)
     image_url = models.URLField(blank=True, null=True)
+    
+    def __str__(self):
+        return "%s" % self.code
+    
+
+class ProductsUpdateHistory(models.Model):
+    id = models.ObjectIdField()
+    created_products = models.IntegerField(blank=True, null=True)
+    updated_products = models.IntegerField(blank=True, null=True)
+    deleted_products = models.IntegerField(blank=True, null=True)
+    update_t = models.DateTimeField(auto_now_add=True)  

@@ -9,11 +9,11 @@ from django.utils.timezone import make_aware
 from django.core.management.base import BaseCommand, CommandError
 
 # Products app imports
-from products.models import Products
+from products.models import Products, ProductsUpdateHistory
 from products.views import get_product, update_product
 
 class Command(BaseCommand):
-    help = 'Import or Update products from gave file'
+    help = 'Import, Update or Delete products from gave file'
 
     def add_arguments(self, parser):
         parser.add_argument('file', nargs='+', type=str)
@@ -33,6 +33,9 @@ class Command(BaseCommand):
     
     
     def handle(self, *args, **options):
+        created_products = 0
+        updated_products = 0
+        deleted_products = 0
         for file in options['file']:
             try:
                 print(file)
@@ -104,6 +107,7 @@ class Command(BaseCommand):
                         main_category=fields_dict['main_category'],
                         image_url=fields_dict['image_url']
                     )
+                    created_products += 1
                     
                     print('Product with code "%s" successfully created' % fields_dict['code'])
                 else:
@@ -114,4 +118,20 @@ class Command(BaseCommand):
                         if product_json:
                             product = update_product(product_json, product)
                             
+                            updated_products += 1
+                            
                             print('Product with code "%s" successfully updated' % fields_dict['code'])
+                        
+                        else:
+                            product.status = Products.Status.trash
+                            product.save()
+                            
+                            deleted_products += 1
+                            
+                            print('Product with code "%s" successfully deleted' % fields_dict['code'])
+
+        ProductsUpdateHistory.objects.create(
+            created_products = created_products,
+            updated_products = updated_products,
+            deleted_products = deleted_products
+        )

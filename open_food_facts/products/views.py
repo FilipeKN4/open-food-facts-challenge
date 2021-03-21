@@ -2,6 +2,7 @@
 import json
 import requests
 import datetime
+import psutil
 from decimal import Decimal
 
 # Django imports
@@ -16,8 +17,8 @@ from rest_framework import authentication, permissions
 from rest_framework import generics
 
 # Products app imports
-from products.models import Products
-from products.api.serializers import ProductsSerializer
+from products.models import Products, ProductsUpdateHistory
+from products.api.serializers import ProductsSerializer, ProductsUpdateHistorySerializer
 
     
 # Consume Open Food Facts API method
@@ -74,8 +75,59 @@ class ProductsOverview(APIView):
             'Update':'/products/<str:code>',
             'Delete':'/products/<str:code>',
         }
+        
+        products_update_history_urls = {
+            'List': '/products_update_history/',
+            'Detail': '/products_update_history/<int:pk>',
+        }
+        
+        urls = {
+            'Products': products_urls,
+            'Products Update History': products_update_history_urls,
+        }
     
-        return Response(products_urls)
+        return Response(urls)
+    
+class APIDetails(APIView):
+    """
+    API Details.
+    """
+    # authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def get(self, request, format=None):
+        last_products_update_history = ProductsUpdateHistory.objects.last()
+        
+        details = {
+            'db_connection': '',
+            'cron_last_execution_t': last_products_update_history.update_t,
+            'online_t': '',
+            'memory_usage': "{} %".format(psutil.virtual_memory().percent),
+            'cpu_usage': "{} %".format(psutil.cpu_percent(4))
+        }
+        
+        last_products_update_history = {
+            "id": last_products_update_history.id,
+            "created_products": last_products_update_history.created_products,
+            "updated_products": last_products_update_history.updated_products,
+            "deleted_products": last_products_update_history.deleted_products,
+            "update_t": last_products_update_history.update_t
+        }
+        
+        api_urls = {
+            "Products": "{}{}".format(request.build_absolute_uri(), 'products/'),
+            "Products Update History": "{}{}".format(request.build_absolute_uri(), 'products_update_history/'),
+            "Account": "{}{}".format(request.build_absolute_uri(), 'account/')
+        }
+        
+        result = {
+            'Details': details,
+            'Last Update': last_products_update_history,
+            'API urls': api_urls
+        }
+    
+        return Response(result)
+
 
 class ProductsList(generics.ListAPIView):
     """
@@ -103,7 +155,6 @@ class ProductDetail(APIView):
 
     def get(self, request, code, format=None):
         product = self.get_object(code)
-        print(product)
         serializer = ProductsSerializer(product)
         return Response(serializer.data)
 
@@ -122,4 +173,34 @@ class ProductDetail(APIView):
         product.status = product.Status.trash
         product.save()
         serializer = ProductsSerializer(product)
+        return Response(serializer.data)
+    
+
+class ProductsUpdateHistoryList(generics.ListAPIView):
+    """
+    List all products updates.
+    """
+    # authentication_classes = [authentication.TokenAuthentication]
+    queryset = ProductsUpdateHistory.objects.all()
+    serializer_class = ProductsUpdateHistorySerializer
+    pagination_class = PageNumberPagination
+    permission_classes = [permissions.IsAuthenticated]
+
+
+class ProductsUpdateHistoryDetail(APIView):
+    """
+    Retrieve a products update history instance.
+    """
+    # authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def get_object(self, pk):
+        try:
+            return ProductsUpdateHistory.objects.get(pk=pk)
+        except ProductsUpdateHistory.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk, format=None):
+        products_update_history = self.get_object(pk)
+        serializer = ProductsUpdateHistorySerializer(products_update_history)
         return Response(serializer.data)
