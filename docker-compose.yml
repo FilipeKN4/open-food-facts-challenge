@@ -1,15 +1,12 @@
 version: "3"
 
 services:
-  # nome do serviço. Pode ser qualquer um.
   django-rest:
-    # localização do Dockerfile. Nesse caso está na mesma pasta do docker-compose.yaml
-    # Essas definições se referem ao comando "docker run -p 8000:8000 -d django-rest"
     build: ./open_food_facts/
+    image: my_django
     command: python ./manage.py runserver 0.0.0.0:8000
     ports: 
     - "8000:8000"
-    # Definir a pasta do conteiner que espelhará todos os arquivos e suas alterações no projeto
-    # Igual ao WORKDIR do Dockerfile
+    container_name: challenge_django_rest
     volumes: 
     - ./open_food_facts/:/usr/app

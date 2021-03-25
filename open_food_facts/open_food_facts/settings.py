@@ -10,8 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
-from pathlib import Path
+import sys
 
+from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 
@@ -72,24 +73,36 @@ TEMPLATES = [
 WSGI_APPLICATION = 'open_food_facts.wsgi.application'
 
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'djongo',
-        "CLIENT": {
-           "name": "open_food_facts_db",
-           "host": "mongodb+srv://user_admin:<password>@cluster0.005uq.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
-           "username": "user_admin",
-           "password": "Admin123",
-           "authMechanism": "SCRAM-SHA-1",
-        }, 
+if 'test' in sys.argv:
+    DATABASES = {
+        'default': {
+            'ENGINE': "",
+            "CLIENT": {
+                "name": "",
+                "host": "",
+                "username": "",
+                "password": "",
+                "authMechanism": "",
+            }
+        }
     }
-}
-
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': "",
+            "CLIENT": {
+            "name": "",
+            "host": "",
+            "username": "",
+            "password": "",
+            "authMechanism": "",
+            } 
+        }
+    }
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
-    # 'DATETIME_FORMAT': '%s',
 }
 
 

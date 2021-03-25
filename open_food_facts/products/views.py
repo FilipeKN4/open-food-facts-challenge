@@ -19,7 +19,7 @@ from rest_framework import generics
 # Products app imports
 from products.models import Products, ProductsUpdateHistory
 from products.api.serializers import ProductsSerializer, ProductsUpdateHistorySerializer
-
+   
     
 # Consume Open Food Facts API method
 def get_product(code):  
@@ -65,7 +65,6 @@ class ProductsOverview(APIView):
     """
     Products endpoints overview.
     """
-    # authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
     
     def get(self, request, format=None):
@@ -88,43 +87,50 @@ class ProductsOverview(APIView):
     
         return Response(urls)
     
+
 class APIDetails(APIView):
     """
     API Details.
     """
-    # authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
     
     def get(self, request, format=None):
         last_products_update_history = ProductsUpdateHistory.objects.last()
         
-        details = {
-            'db_connection': '',
-            'cron_last_execution_t': last_products_update_history.update_t,
-            'online_t': '',
-            'memory_usage': "{} %".format(psutil.virtual_memory().percent),
-            'cpu_usage': "{} %".format(psutil.cpu_percent(4))
-        }
-        
-        last_products_update_history = {
-            "id": last_products_update_history.id,
-            "created_products": last_products_update_history.created_products,
-            "updated_products": last_products_update_history.updated_products,
-            "deleted_products": last_products_update_history.deleted_products,
-            "update_t": last_products_update_history.update_t
-        }
-        
         api_urls = {
-            "Products": "{}{}".format(request.build_absolute_uri(), 'products/'),
-            "Products Update History": "{}{}".format(request.build_absolute_uri(), 'products_update_history/'),
-            "Account": "{}{}".format(request.build_absolute_uri(), 'account/')
-        }
+                "Products": "{}{}".format(request.build_absolute_uri(), 'products/'),
+                "Products Update History": "{}{}".format(request.build_absolute_uri(), 'products_update_history/'),
+                "Account": "{}{}".format(request.build_absolute_uri(), 'account/')
+            }
         
-        result = {
-            'Details': details,
-            'Last Update': last_products_update_history,
-            'API urls': api_urls
-        }
+        if last_products_update_history:
+            details = {
+                'cron_last_execution_t': last_products_update_history.update_t,
+                'memory_usage': "{} %".format(psutil.virtual_memory().percent),
+                'cpu_usage': "{} %".format(psutil.cpu_percent(4))
+            }
+            
+            last_products_update_history = {
+                "id": last_products_update_history.id,
+                "created_products": last_products_update_history.created_products,
+                "updated_products": last_products_update_history.updated_products,
+                "deleted_products": last_products_update_history.deleted_products,
+                "update_t": last_products_update_history.update_t
+            }
+            
+            result = {
+                'Details': details,
+                'Last Update': last_products_update_history,
+                'API urls': api_urls
+            }
+        
+        else:
+            result = {
+                'Details': {},
+                'Last Update': {},
+                'API urls': api_urls
+            }
+            
     
         return Response(result)
 
@@ -133,7 +139,6 @@ class ProductsList(generics.ListAPIView):
     """
     List all products.
     """
-    # authentication_classes = [authentication.TokenAuthentication]
     queryset = Products.objects.all()
     serializer_class = ProductsSerializer
     pagination_class = PageNumberPagination
@@ -144,7 +149,6 @@ class ProductDetail(APIView):
     """
     Retrieve, update or delete a product instance.
     """
-    # authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
     
     def get_object(self, code):
@@ -180,7 +184,6 @@ class ProductsUpdateHistoryList(generics.ListAPIView):
     """
     List all products updates.
     """
-    # authentication_classes = [authentication.TokenAuthentication]
     queryset = ProductsUpdateHistory.objects.all()
     serializer_class = ProductsUpdateHistorySerializer
     pagination_class = PageNumberPagination
@@ -191,7 +194,6 @@ class ProductsUpdateHistoryDetail(APIView):
     """
     Retrieve a products update history instance.
     """
-    # authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
     
     def get_object(self, pk):
