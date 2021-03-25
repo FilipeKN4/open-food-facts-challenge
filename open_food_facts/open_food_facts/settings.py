@@ -72,8 +72,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'open_food_facts.wsgi.application'
 
+# The DB options need to be provided here
 
 if 'test' in sys.argv:
+    # Test DB
     DATABASES = {
         'default': {
             'ENGINE': "",
@@ -87,6 +89,7 @@ if 'test' in sys.argv:
         }
     }
 else:
+    # Default DB
     DATABASES = {
         'default': {
             'ENGINE': "",
